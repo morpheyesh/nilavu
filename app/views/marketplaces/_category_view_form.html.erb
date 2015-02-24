@@ -57,6 +57,7 @@
 						<div class="stpack">
 							<%= link_to marketplace_path(:id => mkp.name), :target => "_self", title: "Open", :remote => true, :class => "link_img" do %>
 							<%= image_tag mkp.appdetails[:logo], :alt => mkp.name %>
+							<%= puts mkp.appdetails[:logo] %>
 							<% end %>
 						</div> </a>
 					</div>
