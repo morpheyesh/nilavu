@@ -44,7 +44,9 @@ Cloudauth::Application.routes.draw do
     match '/data_sources', to: 'data_sources#index', via: [:get, :post]
   end
 
-
+ match '/edituser' => 'users#edituser', via: [:get, :post]
+ match '/userupdate' => 'users#userupdate', via: [:put]
+ 
 #oneapp Overview
   match '/appoverview', to: 'oneapps#overview', via: [:get, :post]
   match '/appruntime', to: 'oneapps#runtime', via: [:get, :post]
@@ -175,8 +177,13 @@ match '/delete_request', :to => 'main_dashboards#delete_request', via: [:get, :p
   match '/drbd_config', to: 'disaster_recovery#drbd_config', via: [:get, :post]
   match '/drbd_submit', to: 'disaster_recovery#drbd_submit', via: [:get, :post]
     match '/view_details', to: 'cross_clouds#view_details', via: [:get, :post] 
-
-  
+    
+    #=====Gog
+    match '/gogs', to: 'marketplaces#gogs', via: [:get, :post]
+   # match '/gogs_return', to: 'marketplaces#gogs_return', via: [:get, :post]
+  post 'trigger', :to => 'marketplaces#gogs_return', via: [:post]
+  match '/gogs_popup', :to => 'marketplaces#gogswindow', via: [:get, :post]
+  #root :to => 'marketplaces#gogswindow'
   # =======Error controller
   get "/404", :to => "errors#not_found"
   #get "/422", :to => "errors#unacceptable"

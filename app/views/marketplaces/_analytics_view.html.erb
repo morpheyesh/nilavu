@@ -1,4 +1,4 @@
-<%= form_tag byoc_launch_path, multipart: true, :novalidate => 'novalidate',  :method => 'post', :remote => true  do %>
+<%= form_tag addons_launch_path, multipart: true, :novalidate => 'novalidate',  :method => 'post', :remote => true  do %>
 <% @mkp.plans.each do |c| %>
 <% if c["version"] == version %>
 <% @mkp_price = c["price"] %>
@@ -10,7 +10,6 @@
 <% @pro_name = (@mkp.name).split("-") %>
 <% @predef_name = get_predef_name(@pro_name[3].downcase) %>
 <% @combos = get_combos(@pro_name[3].downcase) %>
-<% @type = get_type(@pro_name[3].downcase) %>
 <% @combo = @combos.split("+") %>
 <% end %>
 <% end %>
@@ -19,18 +18,9 @@
 <% else %>
 <% @deps_scm = @mkp_source %>
 <% end %>
-<% @mkp_collection = ListMarketPlaceApps.perform(force_api[:email], force_api[:api_key]) %>
-<% @mkpname = []  %>
-<% @mkp_collection.each do |a| %>
-<% @splitname =  a.name.split("-") %>
-<% @typename = get_type(@splitname[3].downcase) %>
-<% if @typename == "APP" %>
-<% @mkpname.push(@splitname[3]) %>
-<% end %>
-<% end %>
-<% @predef_cloud = ListPredefClouds.perform(force_api[:email], force_api[:api_key]) %>
+<%  @predef_cloud = ListPredefClouds.perform(force_api[:email], force_api[:api_key]) %>
 <%  if @predef_cloud.class == Megam::Error %>
-<% redirect_to new_app_path, :gflash => { :warning => { :value => "#{@predef_cloud.some_msg[:msg]}", :sticky => false, :nodom_wrap => true } }     %>    
+<%  redirect_to new_app_path, :gflash => { :warning => { :value => "#{@predef_cloud.some_msg[:msg]}", :sticky => false, :nodom_wrap => true } }     %>    
 <% end %>
 <%= hidden_field_tag 'version', nil, placeholder: "", :class =>"form-control", :value => version  %>
 <%= hidden_field_tag 'source', nil, placeholder: "", :class =>"form-control", :value => @deps_scm  %>
@@ -38,25 +28,14 @@
 <%= hidden_field_tag 'combos', nil, placeholder: "", :class =>"form-control", :value =>  @combos %>
 <%= hidden_field_tag 'appname', nil, placeholder: "", :class =>"form-control", :value =>  book_name %>
 <div class="row">
- 
-	<div class="col-md-7 body_left">
-		 <div class="row">
-			<div class="col-md-4">
-               <div id="byoc_connect"><%= image_tag "gitimg.png",:class=> "img-responsive_byoc "%>
- </div>  </div>
-  <div class="col-md-4">
-               <div id="gogs_connect"><%= image_tag "gogsimg.png",:class=> "img-responsive_byoc "%>
-</div>     </div>
-</div>           
-
+	<div class="col-sm-7 body_left">
+		<h4>Analytics-Hadoop</h4>
 		<div class="row pad_tb25">
 			<div class="col-sm-5">
 				<div class="app_inner brad-3">
-						
-					<div class="col-sm-10 col-xs-10">
-						<%= select_tag "byoc", options_for_select(@mkpname.map{ |c| [c] }, :selected=>@mkpname[0]), :class =>"form-control" %>	
+					<div class="stpack">
+						<%= image_tag "combos/"+@pro_name[3].downcase+".png", :alt => "" %>
 					</div>
-					
 				</div>
 			</div>
 		</div>
@@ -91,8 +70,7 @@
 	<!-- body_left ends here -->
 
 	<div class="col-sm-5 body_right c_height_2">
-	
-		<h4>Choose your SCM</h4>
+		<h4>Attach An Addon</h4>
 		<div class="row">
 			<div class="col-xs-6">
 				<div class="form-group">
@@ -106,19 +84,7 @@
 				</div>
 			</div>
 		</div>
-		<div  class="col-xs-20">
-		
-		
-		    <div id="repos_list">
-		    </div>
-		    
-		    
-		    <div id="gogs_repos_list">
-		    </div>
-		    
-       </div>
 		<div class="row">
-		
 			<div class="col-xs-12">
 				<div class="form-group">
 					<%= submit_tag "Create", :class => "btn green col-xs-12" %>
@@ -126,6 +92,7 @@
 			</div>
 			<!-- <div class="col-xs-12">
 			<div class="form-group">
+
 			</div>
 			</div> -->
 		</div>
@@ -134,52 +101,3 @@
 	<!-- body_right ends here -->
 </div>
 <% end %>
-
-
-<script>
-	$(document).ready(function() {
-		$("#gogs_connect").click(function() {
-			$.oauthpopup({
-				path : "/gogs_popup",
-				//callback: function(){
-				//}
-			});
-		});
-
-		$("#byoc_connect").click(function() {
-			$.oauthpopup({
-				path : "/auth/github",
-				callback : function() {
-					$.get("/github_call", function(data) {
-						console.log(data)
-						console.log("----data----")
-
-						var dataString = data
-						console.log(dataString);
-
-						$.ajax({
-							type : "POST",
-							url : "/github_ajax",
-							//dataType: 'json',
-							data : {
-								id : dataString
-							},
-							success : function(data) {
-								console.log("It worked!")
-								console.log(dataString);
-							},
-
-							error : function(data) {
-								console.log("ERROR CHECK PROPERLY!!");
-								console.log(data);
-							}
-						});
-
-					});
-					return false;
-
-				}
-			});
-		});
-	});
-
